@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" href="css/icon.css">
+		<link rel="stylesheet" href="css/mdl.css">
+		<script defer src="js/material.js"></script>
+		<script src="js/jquery.js"></script>
+		<script src="js/tuchuang.js" defer></script>
+		<script src="http://filehost.eu5.org/js/links.js" defer></script>
+		<title>番薯图床</title>
+		<link rel="icon" type="image/png" href="favicon.png" />
+		<style>
+			.imgcards{position:relative;width:auto;float:left;height:auto}
+			image.resimg{
+				height:auto;
+				float:left;
+			}
+			.hoverwhite:hover{
+				opacity:0.4;
+				filter:alpha(opacity=40);
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Always shows a header, even in smaller screens. -->
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+		  <header class="mdl-layout__header">
+			<div class="mdl-layout__header-row">
+			  <!-- Title -->
+			  <span class="mdl-layout-title">番薯图床</span>
+			  <!-- Add spacer, to align navigation to the right -->
+			  <div class="mdl-layout-spacer"></div>
+			  <!-- Navigation. We hide it in small screens.-->
+			  <nav class="mdl-navigation mdl-layout--large-screen-only">
+			  </nav>
+			</div>
+		  </header>
+		  <div class="mdl-layout__drawer">
+			<span class="mdl-layout-title">链接</span>
+			<nav class="mdl-navigation" id="nav">
+			</nav>
+		  </div>
+		  <main class="mdl-layout__content">
+			<div class="page-content" style="margin:16px;pointer-events: auto;" id="main">
+				<!-- Colored FAB button with ripple -->
+				<button style="position:fixed;z-index:10;bottom:16px; right:16px;" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"  onclick="document.getElementById('upload').click()">
+				  <i class="material-icons">cloud_upload</i>
+				</button>
+				<input id="upload" onchange="up(this.files)" type="file" style="display:none">
+				</div>
+			<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+				<div class="mdl-snackbar__text"></div>
+				<button type="button" class="mdl-snackbar__action"></button>
+			</div>
+		  </main>
+		</div>
+		<div id="dropFile1" style="position:fixed;z-index:10;left:0;top:0;right:0;bottom:0;background-color:white;opacity:0.4;filter:alpha(opacity=40);text-align:center;display:none"><i style="font-size:200px;color:#333333;position:fixed;margin-left:auto;margin-right:autoposition: absolute;top: 50%;transform: translate(-50%, -50%);" class="material-icons">cloud_upload</i></div>
+		<div id="dropFile" ondrop="e=(window.event||$event);up(e.target.files?e.target.files:e.dataTransfer.files);" style="position:fixed;z-index:11;left:0;top:0;right:0;bottom:0;display:none"></div>
+	</body>
+</html>
