@@ -2,10 +2,10 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<link rel="stylesheet" href="css/icon.css">
-		<link rel="stylesheet" href="css/mdl.css">
-		<script defer src="js/material.js"></script>
-		<script src="js/jquery.js"></script>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.blue_grey-indigo.min.css">
+		<script defer src="//cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="js/tuchuang.js" defer></script>
 		<script src="http://filehost.eu5.org/js/links.js" defer></script>
 		<title>番薯图床</title>
@@ -47,7 +47,7 @@
 				<button style="position:fixed;z-index:10;bottom:16px; right:16px;" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"  onclick="document.getElementById('upload').click()">
 				  <i class="material-icons">cloud_upload</i>
 				</button>
-				<input id="upload" onchange="up(this.files)" type="file" style="display:none">
+				<input id="upload" onchange="back.up(this.files)" type="file" style="display:none">
 				</div>
 			<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
 				<div class="mdl-snackbar__text"></div>
@@ -56,6 +56,6 @@
 		  </main>
 		</div>
 		<div id="dropFile1" style="position:fixed;z-index:10;left:0;top:0;right:0;bottom:0;background-color:white;opacity:0.4;filter:alpha(opacity=40);text-align:center;display:none"><i style="font-size:200px;color:#333333;position:fixed;margin-left:auto;margin-right:autoposition: absolute;top: 50%;transform: translate(-50%, -50%);" class="material-icons">cloud_upload</i></div>
-		<div id="dropFile" ondrop="e=(window.event||$event);up(e.target.files?e.target.files:e.dataTransfer.files);" style="position:fixed;z-index:11;left:0;top:0;right:0;bottom:0;display:none"></div>
+		<div id="dropFile" ondrop="e=(window.event||$event);back.up(e.target.files?e.target.files:e.dataTransfer.files);" style="position:fixed;z-index:11;left:0;top:0;right:0;bottom:0;display:none"></div>
 	</body>
 </html>
