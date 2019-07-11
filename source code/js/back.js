@@ -1,7 +1,49 @@
 ﻿function backS(){
+	document.oncontextmenu=()=>{return false;}
 	var ext = new Set(["ICON","BMP","GIF","JPEG","PNG","ICO","JPG","DIB","JFIF","PJPEG","PJP"]);
 	var imgs=[];
+	this.imageFunctions=(tar)=>{
+	  var namer=(icon,text)=>{
+	    return "<i class='material-icons' style='float:left'>"+icon+"</i><abbr style='display:inline-block;margin-top:3px'>&nbsp;"+text+"</abbr>";
+	  }
+		var url=$(tar).find("img").attr("src");
+		var functions={
+			copy:{
+				main:()=>{
+						const input = document.createElement('input');
+						document.body.appendChild(input);
+						input.setAttribute('value', url);
+						input.select();
+						if (document.execCommand('copy')) {
+							document.execCommand('copy');ui.notif("复制成功");
+						}
+				},
+				name:namer("flip_to_front","复制")
+			},
+			remove:{
+				main:()=>{
+					imgs.splice(imgs.indexOf(url),1);
+					setImgs(imgs);
+					ui.rmvImg(url);
+				},
+				name:namer('close',"删除")
+			},
+			delete:{
+				main:()=>{
+					imgs.splice(imgs.indexOf(url),1);
+					setImgs(imgs);
+					ui.rmvImg(url);
+				},
+				name:namer("delete","完全删除")
+			}
+		}
+		return functions;
+	}
 	$(document).ready(function(){
+		var menu=document.createElement("div");
+		$(menu).attr("id","menu");
+		$(menu).css({"padding":"5px","border-radius":"4px","box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)","opacity":"80","overflow":"hidden","position":"fixed","height":"auto","display":"none","z-index":"13","background-color":"white"});
+		document.getElementById("dropFile").appendChild(menu);
 		document.getElementById("dropFile").ondrop=(e)=>{
 			up(e.target.files?e.target.files:e.dataTransfer.files);
 		};

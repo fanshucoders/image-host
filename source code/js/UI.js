@@ -13,8 +13,10 @@ function uiS(){
 		w=document.body.clientWidth;
 		if(w<=maxWidth+32){
 			$(".resimg").css("max-width",w-32+"px");
+      $(".imgcards").css("max-width",w-32+"px");
 		}else{
 			$(".resimg").css("max-width",maxWidth+"px");
+      $(".imgcards").css("max-width",maxWidth+"px");
 		}
     $(".imgcards").hover(
       function(){
@@ -34,11 +36,62 @@ function uiS(){
 			changeSize();
 		}
 	}
-	this.addImg=(url)=>{
+  var createImageCard=(url)=>{
     var tar=document.createElement("div");
-    $(tar).addClass("imgcards");
-    $(tar).html("<a title='点击复制链接' href='javascript:void(0)' onclick='back.clip(\""+url+"\")'><image src='"+url+"' class='hoverwhite resimg'></a><a class='close' style='display:none'href='javascript:back.removeImg(\""+url+"\")'><i class='material-icons' style='position:absolute;z-index:10;top:0px;right:0px;background-color:red;color:white'>close</i></a>");
-    document.getElementById("main").appendChild(tar);
+      $(tar).addClass("imgcards");
+    var copy=document.createElement("a");
+      $("#dropFile").click(()=>{$("#menu").animate({
+        width:"0px",height:"0px"
+      },50,()=>{$("#dropFile").css("display","none");});});
+      $("#dropFile").contextmenu(()=>{$("#menu").animate({
+        width:"0px",height:"0px"
+      },50,()=>{$("#dropFile").css("display","none");});});
+      var functions=back.imageFunctions(tar);
+      copy.oncontextmenu=(e)=>{
+        var menu=$("#menu");
+        console.log(e);
+        menu.html("");
+        for(var f in functions){
+          var x=document.createElement("a");
+          $(x).css({"color":"CadetBlue","clear":"both","textDecoration":"none","display":"block","padding":"4px","width":"auto","z-index":"13","position":"relative"});
+          x.href="#";
+          x.innerHTML=functions[f].name;
+          x.onclick=functions[f].main;
+          menu.append(x)
+        }
+        $("#dropFile").css("display","initial");
+        $(menu).css({"height":"auto","width":"auto"});
+        var height=$(menu).height(),width=$(menu).width();
+        var l, t;
+        var l = e.clientX;
+        var t = e.clientY;
+        w=document.body.clientWidth;
+        h=document.body.clientHeight;
+        if(t+height>h)l=h-height;
+        if(l+72>w)l=w-72;
+        $(menu).css({"top":t+"px","left":l+"px","display":"block"});
+        $(menu).css({"height":"0px","width":"0px"});
+        $(menu).animate({
+            width:width+"px",height:height+"px"
+        },300);
+        return false;
+      }
+      copy.onclick=functions.copy.main;
+      copy.href="#";
+      copy.title="点击复制链接"
+      copy.innerHTML="<image src='"+url+"' class='hoverwhite resimg'>";
+    var del=document.createElement("a");
+      $(del).addClass("close");
+      $(del).css("display","none");
+      del.href="#";
+      del.innerHTML="<i class='material-icons' style='position:absolute;z-index:10;top:0px;right:0px;background-color:red;color:white;'>close</i>";
+      del.onclick=functions.remove.main;
+      tar.appendChild(copy);
+      tar.appendChild(del);
+    return tar;
+  }
+	this.addImg=(url,functions)=>{
+    document.getElementById("main").appendChild(createImageCard(url));
     refresh();
   }
 	this.rmvImg=(url)=>{
@@ -75,9 +128,23 @@ function uiS(){
       setProgress:(progress)=>{
         $(tar).find(".progressBar").css("width",progress+"%");
       },
-      updateUploadedImg:(url)=>{
-        tar.innerHTML="<a title='点击复制链接' href='javascript:void(0)' onclick='back.clip(\""+url+"\")'><image src='"+url+"' class='hoverwhite resimg'></a><a class='close' style='display:none'href='javascript:back.removeImg(\""+url+"\")'><i class='material-icons' style='position:absolute;z-index:10;top:0px;right:0px;background-color:red;color:white'>close</i></a>";
-        refresh();
+      updateUploadedImg:(url,functions)=>{
+        $(pgbc).animate({
+          height:"0px",opacity:"0"
+        },"slow",()=>{
+          $(pgbc).css("display","none");
+          var ok=document.createElement("div");
+          ok.style="position:absolute;top:50%;left:0;right:0;margin:auto;font-size:0px";
+          ok.innerHTML="<i class='material-icons' style='font-size:inherit;top:50%;padding:0px;text-align:center;solid;display:block'>check_circle</i>";
+          tar.appendChild(ok);
+          $(ok).animate({
+            top:"-=18px",fontSize:"36px"
+          }).fadeOut(1000,()=>{
+            $(ok).css("display","none");
+            tar.parentNode.replaceChild(createImageCard(url,functions),tar);
+            refresh();
+          });
+        });
       }
     }
     return functions;

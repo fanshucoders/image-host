@@ -24,6 +24,7 @@ Simply upload everything to your website and everything is done.
 - [ ] <abbr id="display_progress_bar">Display progress bar with image while uploading</abbr>
 - [ ] <abbr id="delete_from_server">Delete from server, not only from browser</abbr>
 - [ ] Improve on compressing for png and gif
+- [x] ~~Right Click Menu~~
 
 ## Download
 Download from the [releases](https://github.com/fanshucoders/image-host/releases) page.

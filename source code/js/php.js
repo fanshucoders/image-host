@@ -2,6 +2,8 @@ function phpS(){
 	var fileNameLength=32;
   var uploading=false;
   this.upload=(file,completeDo,setProgress)=>{
+		completeDo("http://img-ads.csdn.net/2018/201811021754465829.jpg");
+		return;
     var _this={
         upload:function(file){
           uploading=true;

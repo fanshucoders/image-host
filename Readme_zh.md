@@ -24,6 +24,7 @@
 - [ ] <span id="display_progress_bar">上传时在图片上展示进度条</span>
 - [ ] <span id="delete_from_server">不仅从浏览器删除，也可以从服务器删除</span>
 - [ ] 改善对png和gif图片的压缩
+- [x] 右键菜单 
 
 ## 下载
 从 [releases](https://github.com/fanshucoders/image-host/releases) 下载
