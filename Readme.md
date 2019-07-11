@@ -25,7 +25,5 @@ Simply upload everything to your website and everything is done.
 - [ ] <abbr id="delete_from_server">Delete from server, not only from browser</abbr>
 - [ ] Improve on compressing for png and gif
 
-## Download
-Down load from the [releases](https://github.com/fanshucoders/image-host/releases) page.
 ## Demo
 A demo of this application is available at http://fstc.hostfree.pw
