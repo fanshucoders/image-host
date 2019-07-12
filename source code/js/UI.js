@@ -4,7 +4,36 @@ function uiS(){
     return document.createElement(type);
   }
   var namer=(icon,text)=>{
-    return "<i class='material-icons' style='float:left'>"+icon+"</i><abbr style='display:inline-block;margin-top:3px'>&nbsp;"+text+"</abbr>";
+    return "<div style='position:relative;height:auto;white-space:nowrap'><i class='material-icons'>"+icon+"</i><div style='position:relative;margin-top:-20px;margin-left:30px'>"+text+"</div></div>";
+  }
+  var displayMenu=(e,functions)=>{
+    console.log(1);
+    var menu=$("#menu");
+    var list=$("#menuList");
+    list.html("");
+    for(var f in functions){
+      var x=create("a");
+      $(x).addClass("menuListItem");
+      x.href="#";
+      x.innerHTML=functions[f].name;
+      x.onclick=functions[f].main;
+      list.append(x)
+    }
+    $("#dropFile").css("display","initial");
+    $(menu).css("display","block");
+    var height=list.height(),width=list.width();
+    var l, t;
+    var l = e.clientX;
+    var t = e.clientY;
+    w=document.body.clientWidth-16;
+    h=document.body.clientHeight;
+    if(t+height>h)l=h-height;
+    if(l+width>w)l=w-width;
+    $(menu).css({"top":t+"px","left":l+"px","display":"block"});
+    $(menu).css({"height":"0px","width":"0px"});
+    $(menu).animate({
+        width:width+"px",height:height+"px"
+    },300);
   }
   var imageFunctions=(tar,url)=>{
       var functions={
@@ -107,32 +136,7 @@ function uiS(){
       var functions=imageFunctions(tar,url);
       copy.oncontextmenu=(e)=>{
         e.cancelBubble = true;
-        var menu=$("#menu");
-        console.log(e);
-        menu.html("");
-        for(var f in functions){
-          var x=create("a");
-          $(x).css({"color":"CadetBlue","clear":"both","textDecoration":"none","display":"block","padding":"4px","width":"auto","z-index":"13","position":"relative"});
-          x.href="#";
-          x.innerHTML=functions[f].name;
-          x.onclick=functions[f].main;
-          menu.append(x)
-        }
-        $("#dropFile").css("display","initial");
-        $(menu).css({"height":"auto","width":"auto","top":"0px","left":"0px"});
-        var height=$(menu).height(),width=$(menu).width();
-        var l, t;
-        var l = e.clientX;
-        var t = e.clientY;
-        w=document.body.clientWidth-16;
-        h=document.body.clientHeight;
-        if(t+height>h)l=h-height;
-        if(l+width>w)l=w-width;
-        $(menu).css({"top":t+"px","left":l+"px","display":"block"});
-        $(menu).css({"height":"0px","width":"0px"});
-        $(menu).animate({
-            width:width+"px",height:height+"px"
-        },300);
+        displayMenu(e,functions);
         return false;
       }
       copy.onclick=functions.copy.main;
@@ -261,7 +265,7 @@ function uiS(){
     },50,()=>{$("#dropFile").css("display","none");});});
     $("#dropFile").contextmenu(()=>{$("#menu").animate({
       width:"0px",height:"0px"
-    },50,()=>{$("#dropFile").css("display","none");});});
+    },50,()=>{$("#dropFile").css("display","none");});return false;});
     //document.oncontextmenu=()=>{return false;}
     document.getElementById("upload-display").oncontextmenu=(e)=>{
         e.cancelBubble = true;
@@ -289,31 +293,7 @@ function uiS(){
     });
     var functions=mainFunctions();
     document.querySelector("main.mdl-layout__content").oncontextmenu=(e)=>{
-      var menu=$("#menu");
-      menu.html("");
-      for(var f in functions){
-        var x=create("a");
-        $(x).css({"color":"CadetBlue","clear":"both","textDecoration":"none","display":"block","padding":"4px","width":"auto","z-index":"13","position":"relative"});
-        x.href="#";
-        x.innerHTML=functions[f].name;
-        x.onclick=functions[f].main;
-        menu.append(x)
-      }
-      $("#dropFile").css("display","initial");
-      $(menu).css({"height":"auto","width":"auto","top":"0px","left":"0px"});
-      var height=$(menu).height(),width=$(menu).width();
-      var l, t;
-      var l = e.clientX;
-      var t = e.clientY;
-      w=document.body.clientWidth-16;
-      h=document.body.clientHeight;
-      if(t+height>h)l=h-height;
-      if(l+width>w)l=w-width;
-      $(menu).css({"top":t+"px","left":l+"px","display":"block"});
-      $(menu).css({"height":"0px","width":"0px"});
-      $(menu).animate({
-          width:width+"px",height:height+"px"
-      },300);
+      displayMenu(e,functions);
       return false;
     }
     refresh();

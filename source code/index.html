@@ -68,6 +68,18 @@
 				filter:alpha(opacity=80);
 				background-color:white;
 			}
+			.menuListItem{
+				color:CadetBlue;clear:both;text-decoration:none;display:block;padding:10px;width:auto;z-index:13;position:relative;
+					-webkit-transition-duration: 0.4s;
+					transition-duration: 0.4s;
+			}
+			.menuListItem:hover{
+				color:white;background-color:CadetBlue;
+			}
+			.menuListItem:active{
+				background-color: DarkCyan;
+				transform:scale(0.9);
+			}
 		</style>
 	</head>
 	<body>
@@ -106,7 +118,9 @@
 		</div>
 		<div id="dropFile1" style="position:fixed;z-index:11;left:0;top:0;right:0;bottom:0;background-color:white;opacity:0.4;filter:alpha(opacity=40);text-align:center;display:none"><i style="font-size:200px;color:#333333;position:fixed;margin-left:auto;margin-right:autoposition: absolute;top: 50%;transform: translate(-50%, -50%);" class="material-icons">cloud_upload</i></div>
 		<div id="dropFile" style="position:fixed;z-index:12;left:0;top:0;right:0;bottom:0;display:none">
-			<div id="menu" style="padding:5px;border-radius:4px;box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);opacity:80;overflow:hidden;position:fixed;height:auto;display:none;z-index:13;background-color:white"></div>
+			<div id="menu" style="border-radius:4px;box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);opacity:80;overflow:hidden;position:fixed;height:auto;display:none;z-index:13;background-color:white">
+				<div id="menuList" style="display:inline-block"></div>
+			</div>
 		</div>
 	</body>
 </html>
