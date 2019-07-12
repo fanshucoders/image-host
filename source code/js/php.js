@@ -1,141 +1,179 @@
-function phpS(){
-	var fileNameLength=32;
-  var uploading=false;
-  this.upload=(file,completeDo,setProgress)=>{
-    var _this={
-        upload:function(file){
-          uploading=true;
-          var t=new FormData;
-            t.append("file",file);
-            t.append("fname",this.randomString(fileNameLength)+"."+getFileExt(file));
-          let xhr = new XMLHttpRequest();
-            xhr.open('post',domain+"/upload.php");
-            xhr.send(t);
-          xhr.onload = () =>
-            {
-              console.log(file,domain+"/uploads/"+t.get("fname"));
-              uploading=false;
-              completeDo(domain+"/uploads/"+t.get("fname"));
-            }
-          xhr.error = () =>
-            {
-              uploading=false;
-              completeDo("failed");
-            }
-        },
-        randomString:function (len) {
-    　　		var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678oOLl9gqVvUuI1_-';
-    　　		var maxPos = $chars.length;
-    　　		var pwd = '';
-    　			for (i = 0; i < len; i++) {
-    　　　		　	pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
-    　　		}
-    　			return pwd;
-        },
-        /**
-        * 校验图片转换后大小并上传
-        */
-        checkAndHandleUpload:function(file) {
-          this.imgBase64(file, function (image, canvas) {
-            var maxSize = 2.0*1024*1024; // 2M
-            var fileSize = file.size; // 图片大小
-            if(fileSize > maxSize) { // 如果图片大小大于2m，进行压缩
-              //console.log(maxSize,fileSize, maxSize/fileSize );
-              uploadSrc = canvas.toDataURL(file.type, maxSize/fileSize);
-              uploadFile = _this.convertBase64UrlToFile(uploadSrc, file.name.split('.')[0]+"."+file.name.split('.')[1]); // 转成file文件
-            } else {
-              uploadSrc = image.src; //canvas.toDataURL(file.type,0.5);
-              uploadFile = file;
-            }
-            if(uploadFile.size > maxSize) {
-              _this.checkAndHandleUpload(uploadFile);
-            } else {
-              _this.upload(uploadFile);
-            }
-          });
-        },
-        /**
-        * 将图片转化为base64
-        */
-        imgBase64:function(file,callback){
-          var self = this;
-          // 看支持不支持FileReader
-          if (!file || !window.FileReader) return;
-          // 创建一个 Image 对象
-          var image = new Image();
-          // 绑定 load 事件处理器，加载完成后执行
-          image.onload = function(){
-            // 获取 canvas DOM 对象
-            var canvas = document.createElement('canvas')
-            // 返回一个用于在画布上绘图的环境, '2d' 指定了您想要在画布上绘制的类型
-            var ctx = canvas.getContext('2d')
-            // 如果高度超标 // 参数，最大高度
-            var MAX_HEIGHT = 3000;
-            if(image.height > MAX_HEIGHT) {
-              // 宽度等比例缩放 *=
-              image.width *= MAX_HEIGHT / image.height;
-              image.height = MAX_HEIGHT;
-            }
-            // 获取 canvas的 2d 环境对象,
-            // 可以理解Context是管理员，canvas是房子
-            // canvas清屏
-            console.log('canvas.width:', canvas.width);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // 重置canvas宽高
-            canvas.width = image.width;
-            canvas.height = image.height;
-            // 将图像绘制到canvas上
-            ctx.drawImage(image, 0, 0, image.width, image.height);
-            // !!! 注意，image 没有加入到 dom之中
-            console.log(file.type);
-            // console.log(canvas.toDataURL('image/jpeg',0.5));
-            //----------//
-            callback(image, canvas);
-            //--------//
-          };
-          if (/^image/.test(file.type)) {
-            // 创建一个reader
-            var reader = new FileReader();
-            // 将图片将转成 base64 格式
-            reader.readAsDataURL(file);
-            // 读取成功后的回调
-            reader.onload = function () {
-              // self.imgUrls.push(this.result);
-              // 设置src属性，浏览器会自动加载。
-              // 记住必须先绑定事件，才能设置src属性，否则会出同步问题。
-              image.src = this.result;
-            }
-          }
-        },
-        //base64 To Img
-        convertBase64UrlToFile:function (base64Data,imgName){
-
-          var blob = this.dataURLtoBlob(base64Data);
-          var file = this.blobToFile(blob, imgName);
-          return file;
-        },
-        //base64 To blob
-        dataURLtoBlob:function(dataurl){
-          var arr = dataurl.split(','),
-          mime = arr[0].match(/:(.*?);/)[1],bstr = atob(arr[1]),n = bstr.length,
-          u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-          }
-          return new Blob([u8arr], { type: mime });
-        },
-        //blob To File
-        blobToFile:function(theBlob, fileName){
-          theBlob.lastModifiedDate = new Date();
-          theBlob.name = fileName;
-          return theBlob;
-        }
-      }
-      _this.checkAndHandleUpload(file);
-			return ()=>{
-				/*取消上传这个文件*/
+function upload(data=!1){
+	//设置
+	var config =
+		{ 	file_max_size : data.file_max_size || 1024 * 1024 * 1024,//单文件大小限制false\0不限制
+			chunkSize : data.chunkSize || 1024 * 1024 * 2 ,//单个切片大小
+			//注意PHP默认上传文件默认最大2MB   若要更改请找到    upload_max_filesize = 2m ;   这行进行更改
+			uploadphp : data.uploadphp || "upload.php",//文件上传php
+			accept_type : data.accept_type || "",//空\false\0为不限制
+			Maximum : data.Maximum  || 0,//一次最多可上传数目false\0不限制
+			accept_re : data.accept_re || false ,//false\0为不允许 true\1 允许
+			nameLength: Math.floor(data.nameLength) || 32,
+			savedir : data.savedir || "savedir"
+		},
+	g = 0,
+	FUploaders = Object.create(null,{}),
+	//计算临时ID
+	y =()=>{
+		var e = Math.random().toString(32).substr(2, 5),
+		t = Math.floor(Date.now() / 1e3);
+		return "FUploader_".concat(g++, "_",e, "_",t);
+	};
+	//获取随机文件名
+	var randomString = ()=> {
+		var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678oOLl9gqVvUuI1_-';
+		var maxPos = $chars.length;
+		var pwd = '';
+		for (i = 0; i < config.nameLength; i++) {
+			pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
 			}
-    }
-    return this;
+			return pwd;
+	}
+	//添加文件
+	this.additem=(file,functions)=>{
+		//判断是否允许重复
+		if(!config.accept_re){
+			//不允许
+			//获取全部文件名
+			let names = ()=>{
+				let name = [],
+					names = Object.keys(FUploaders);
+				for(let i=0;i<names.length;i++){
+					name.push(FUploaders[names[i]].file.name);
+				}
+				return name;
+			}
+			//有相同文件名的
+			if(names().indexOf(file.name)!=-1){
+				//console.log( files[i].name + "文件重复选择");
+				functions.completeDo("duplicate");
+				return;
+			}
+
+		}
+		//判断是否限制大小
+		if(config.file_max_size)
+			//判断不通过
+			if(config.file_max_size<=file.size){
+				functions.completeDo("overSize");
+				//console.log( "文件大小不符合");
+				return;
+			}
+
+		//获取本次ID
+		let id = y();
+		FUploaders[id]={};
+		FUploaders[id].file = file;
+		FUploaders[id].chunks = Math.ceil(file.size / config.chunkSize);
+		FUploaders[id].uploading = 1; //1进行 0暂停
+		FUploaders[id].currentChunk = -1 ;
+		FUploaders[id].load = 0;
+		FUploaders[id].functions = functions;
+		upload(id);
+
+		//删除
+		console.log(2);
+		return ()=>{
+			FUploaders[id].uploading = 0;
+			let fd = new FormData();
+			fd.append("id",id);
+			fd.append('act', 'del');
+			fd.append('load', FUploaders[id].load);
+			if(FUploaders[id].load)fd.append('fname', FUploaders[id].fname);
+			let xhr = new XMLHttpRequest();
+			xhr.open('post',config.uploadphp);
+			xhr.send(fd);
+			xhr.onreadystatechange = ()=> {
+				if (xhr.readyState == 4 && xhr.status == 200 ) {
+					console.log(id + " 已删除");
+					delete FUploaders[id]
+					//从文件列表移除
+				}
+			}
+		}
+
+	}
+	//上传
+	var upload=(id)=>{
+		FUploaders[id].currentChunk++;
+		let file = FUploaders[id].file,
+			start = FUploaders[id].currentChunk * config.chunkSize,
+			end = start + config.chunkSize >= file.size ? file.size : start + config.chunkSize,
+			blob = file.slice(start,end);
+		let fd = new FormData();
+		let startT;
+		fd.append("file",blob);
+		fd.append("chunks",  FUploaders[id].chunks);
+		fd.append("chunksize", blob.size);
+		fd.append('Chunkindex', FUploaders[id].currentChunk);
+		fd.append('id', id);
+		fd.append('savedir', config.savedir);
+		fd.append('act', 'upload');
+		let xhr = new XMLHttpRequest();
+		xhr.open('post',config.uploadphp);
+		xhr.send(fd);
+		startT = (new Date()).getTime();
+		xhr.upload.onloadstart = ()=>{
+			startT = (new Date()).getTime();
+		}
+		function onprogress(size,e){
+			var nowTime = (new Date()).getTime();
+				progress = parseInt( size / FUploaders[id].file.size * 100),
+				speed = parseInt(e / [(nowTime - startT + 20) / 1000]),
+				preTime = Math.round((FUploaders[id].file.size - size) / speed);
+			FUploaders[id].functions.setProgress()
+		}
+		//成功
+		xhr.onload = ()=> {
+			onprogress(FUploaders[id].currentChunk * config.chunkSize + blob.size,blob.size);
+			if(FUploaders[id].currentChunk < FUploaders[id].chunks) {
+				//下一片
+
+				if(FUploaders[id].uploading == 1 ){
+					upload(id);
+				}
+			} else {
+			// 文件上传完成
+				let fd2 = new FormData();
+				fd2.append("id",id);
+				fd2.append('fname', randomString()+"."+getFileExt(file));
+				fd2.append('act', 'combine');
+				fd2.append("chunks",  FUploaders[id].chunks);
+				let xhr2 = new XMLHttpRequest();
+				xhr2.open('post',config.uploadphp);
+				xhr2.send(fd2);
+				xhr2.onreadystatechange = ()=> {
+					if (xhr2.readyState == 4 && xhr2.status == 200 ) {
+						//文件合并完成
+						FUploaders[id].load = 1;
+						FUploaders[id].fname = fd2.get("fname");
+						xhr2 = null;
+						fd2 = null;
+						FUploaders[id].functions.completeDo(domain+"/uploads/"+FUploaders[id].fname);
+					}
+				}
+			}
+			//暂停
+			if(FUploaders[id].uploading == 0 ){
+				return;
+			}
+
+			xhr = null;
+			blob = null;
+			return;
+		}
+		//给计算参数
+		xhr.onprogress=(evt)=>{
+			onprogress( evt.loaded + FUploaders[id].currentChunk * config.chunkSize,evt.loaded)
+		};
+		// 文件上传出错
+		xhr.onerror = xhr.upload.onerror = ()=> {
+			FUploaders[id].functions.completeDo("failed");
+		}
+		fd = null;
+
+	}
+
+	return this;
 }
-var php=phpS();
+var php=upload();

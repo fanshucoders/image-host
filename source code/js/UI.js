@@ -1,7 +1,68 @@
 function uiS(){
   var maxWidth=144;
-  var create(type){
+  var create=(type)=>{
     return document.createElement(type);
+  }
+  var namer=(icon,text)=>{
+    return "<i class='material-icons' style='float:left'>"+icon+"</i><abbr style='display:inline-block;margin-top:3px'>&nbsp;"+text+"</abbr>";
+  }
+  var imageFunctions=(tar,url)=>{
+      var functions={
+          copy:{
+              main:()=>{
+                      const input = document.createElement('input');
+                      document.body.appendChild(input);
+                      input.setAttribute('value', url);
+                      input.select();
+                      if (document.execCommand('copy')) {
+                          document.execCommand('copy');ui.notif("复制成功");
+                      }
+              },
+              name:namer("flip_to_front","复制")
+          },
+          remove:{
+              main:()=>{
+                console.log(url);
+                back.rmvImg(url);
+                tar.parentNode.removeChild(tar);
+              },
+              name:namer('close',"删除")
+          },
+          delete:{
+              main:()=>{
+                back.rmvImg(url);
+                tar.parentNode.removeChild(tar);
+              },
+              name:namer("delete","完全删除")
+          }
+      }
+      return functions;
+  }
+  var mainFunctions=()=>{
+    var functions={
+      upload:{
+        main:()=>{
+          document.getElementById('upload').click();
+        },
+        name:namer("cloud_upload","上传")
+      },
+      deleteAll:{
+        main:()=>{
+          $(".imgcards").each((i,x)=>{
+            imageFunctions(x).remove.main();
+            //console.log(x);
+          });
+        },
+        name:namer("delete","全部删除")
+      },
+      mainPage:{
+        main:()=>{
+          location.href="https://www.github.com/fanshucoders/image-host"
+        },
+        name:namer("home","项目主页")
+      }
+    }
+    return functions;
   }
 	this.notif=(m,t=500)=>{
 		var notification = document.querySelector('.mdl-js-snackbar');
@@ -43,14 +104,9 @@ function uiS(){
     var tar=create("div");
       $(tar).addClass("imgcards");
     var copy=create("a");
-      $("#dropFile").click(()=>{$("#menu").animate({
-        width:"0px",height:"0px"
-      },50,()=>{$("#dropFile").css("display","none");});});
-      $("#dropFile").contextmenu(()=>{$("#menu").animate({
-        width:"0px",height:"0px"
-      },50,()=>{$("#dropFile").css("display","none");});});
-      var functions=back.imageFunctions(tar);
+      var functions=imageFunctions(tar,url);
       copy.oncontextmenu=(e)=>{
+        e.cancelBubble = true;
         var menu=$("#menu");
         console.log(e);
         menu.html("");
@@ -63,15 +119,15 @@ function uiS(){
           menu.append(x)
         }
         $("#dropFile").css("display","initial");
-        $(menu).css({"height":"auto","width":"auto"});
+        $(menu).css({"height":"auto","width":"auto","top":"0px","left":"0px"});
         var height=$(menu).height(),width=$(menu).width();
         var l, t;
         var l = e.clientX;
         var t = e.clientY;
-        w=document.body.clientWidth;
+        w=document.body.clientWidth-16;
         h=document.body.clientHeight;
         if(t+height>h)l=h-height;
-        if(l+72>w)l=w-72;
+        if(l+width>w)l=w-width;
         $(menu).css({"top":t+"px","left":l+"px","display":"block"});
         $(menu).css({"height":"0px","width":"0px"});
         $(menu).animate({
@@ -83,6 +139,7 @@ function uiS(){
       copy.href="#";
       copy.title="点击复制链接"
       copy.innerHTML="<image src='"+url+"' class='hoverwhite resimg'>";
+      copy.style="z-index:10";
     var del=create("a");
       $(del).addClass("close");
       $(del).css("display","none");
@@ -97,17 +154,12 @@ function uiS(){
     document.getElementById("main").appendChild(createImageCard(url));
     refresh();
   }
-	this.rmvImg=(url)=>{
-		var target=document.querySelector("img[src='"+url+"']").parentNode.parentNode;
-		target.parentNode.removeChild(target);
-		notif('删除成功');
-	}
-  this.createUploadingImage=(file,cancl)=>{
+  this.createUploadingImage=(file,cancl,retry)=>{
     var tar=create("div");
     var img=create("img");
     var pgbc=create("div");
     $(pgbc).addClass("progressBarContainer");
-    pgbc.innerHTML="<div class='progressBar'></div>";
+    pgbc.innerHTML="<div class='progressBar' style='width:100%'></div>";
     //pgb.MaterialProgress.setProgress(44);
     var cancel=create("a");
     $(img).addClass("resimg");
@@ -121,6 +173,7 @@ function uiS(){
     tar.appendChild(cancel);
     tar.appendChild(pgbc);
     document.getElementById("main").appendChild(tar);
+    $(tar).find(".progressBar").animate({"width":"0%"});
     refresh();
     var reader = new FileReader();
     reader.onload =(e)=>{
@@ -134,17 +187,20 @@ function uiS(){
       },"slow",()=>{
         $(pgbc).css("display","none");
         var b=create("button");
-        b.style="border-radius:50%;background-color:Crimson;";
+        $(b).addClass("action");
+        //$(b).addClass("mdl-button mdl-js-button");
         var i=create("i");
+        //i.style="display:block;top:0;left:0;right:0;bottom:0;font-size:36px;margin:auto"
         i.innerHTML=bi;
         $(i).addClass("material-icons");
         b.appendChild(i);
         b.onclick=action;
         var mc=create("div");
+        $(mc).addClass("message-container");
         var mb=create("div");
-        mb.style="position:absolute;top:0px;bottom:0px;left:0px;right:0px;margin:auto;test-align:center";
+        mb.style="position:absolute;top:50%;transform:translate(-0%,-50%);width:100%;height:auto;text-align:center;";
         mc.style="position:absolute;top:0px;left:0px;height:100%;width:100%;z-index:5;opacity:0";
-        mb.innerHTML=m);
+        mb.innerHTML=m+"<br>";
         mb.appendChild(b);
         mc.appendChild(mb);
         tar.appendChild(mc);
@@ -158,9 +214,23 @@ function uiS(){
         $(tar).find(".progressBar").animate({"width":progress+"%"});
       },
       updateUploadedImg:(url,functions)=>{
-        if(url=="failed")setMessage("<p style='color:red'>文件上传失败</p>","refresh",()=>{back.up([file]);});
-        else if(url=="duplicate")setMessage("<p style='color:red'>文件重复</p>","close",()=>{tar.parentNode.removeChild(tar);});
-        else if(url=="overSize")setMessage("<p style='color:red'>文件过大，请压缩后再上传</p>","close",()=>{tar.parentNode.removeChild(tar);tar=null;});
+        if(url=="failed")setMessage("<b style='width:auto;color:red'>文件上传失败</b>","refresh",()=>{
+          $(tar).find(".message-container").animate({opacity:0},()=>{$(this).css("display","none")});
+          $(pgbc).css("display","initial");
+          $(pgbc).animate({height:"24px",opacity:0.8});
+          $(tar).find(".progressBar").animate({"width":"0%"});
+          retry();
+        });
+        else if(url=="duplicate")setMessage("<b style='color:red'>文件重复</b>","close",()=>{
+          $(tar).animate({opacity:0},()=>{
+            tar.parentNode.removeChild(tar);
+          });
+        });
+        else if(url=="overSize")setMessage("<b style='color:red'>文件过大，请压缩后再上传</b>","close",()=>{
+          $(tar).animate({opacity:0},()=>{
+            tar.parentNode.removeChild(tar);
+          });
+        });
         else{
           $(cancel).css("display","none");
           $(pgbc).animate({
@@ -175,7 +245,7 @@ function uiS(){
               top:"-=18px",fontSize:"36px"
             }).fadeOut(1000,()=>{
               $(ok).css("display","none");
-              tar.parentNode.replaceChild(createImageCard(url,functions),tar);
+              tar.parentNode.replaceChild(createImageCard(url),tar);
               refresh();
             });
           });
@@ -183,6 +253,70 @@ function uiS(){
       }
     }
     return functions;
+  }
+  this.init_=()=>{
+    document.onselectstart = function(){ return false;};
+    $("#dropFile").click(()=>{$("#menu").animate({
+      width:"0px",height:"0px"
+    },50,()=>{$("#dropFile").css("display","none");});});
+    $("#dropFile").contextmenu(()=>{$("#menu").animate({
+      width:"0px",height:"0px"
+    },50,()=>{$("#dropFile").css("display","none");});});
+    //document.oncontextmenu=()=>{return false;}
+    document.getElementById("upload-display").oncontextmenu=(e)=>{
+        e.cancelBubble = true;
+        console.log(e);
+        return false;
+    }
+    $(document).on({
+        dragover:function(e){
+            e.preventDefault();
+            $("#dropFile").css("display","initial");
+            $("#dropFile1").css("display","initial");
+        },
+    });
+    $("#dropFile").on({
+        dragleave:function(e){
+            e.preventDefault();
+            $("#dropFile").css("display","none");
+            $("#dropFile1").css("display","none");
+        },
+        drop:function(e){
+            e.preventDefault();
+            $("#dropFile").css("display","none");
+            $("#dropFile1").css("display","none");
+        },
+    });
+    var functions=mainFunctions();
+    document.querySelector("main.mdl-layout__content").oncontextmenu=(e)=>{
+      var menu=$("#menu");
+      menu.html("");
+      for(var f in functions){
+        var x=create("a");
+        $(x).css({"color":"CadetBlue","clear":"both","textDecoration":"none","display":"block","padding":"4px","width":"auto","z-index":"13","position":"relative"});
+        x.href="#";
+        x.innerHTML=functions[f].name;
+        x.onclick=functions[f].main;
+        menu.append(x)
+      }
+      $("#dropFile").css("display","initial");
+      $(menu).css({"height":"auto","width":"auto","top":"0px","left":"0px"});
+      var height=$(menu).height(),width=$(menu).width();
+      var l, t;
+      var l = e.clientX;
+      var t = e.clientY;
+      w=document.body.clientWidth-16;
+      h=document.body.clientHeight;
+      if(t+height>h)l=h-height;
+      if(l+width>w)l=w-width;
+      $(menu).css({"top":t+"px","left":l+"px","display":"block"});
+      $(menu).css({"height":"0px","width":"0px"});
+      $(menu).animate({
+          width:width+"px",height:height+"px"
+      },300);
+      return false;
+    }
+    refresh();
   }
 	return this;
 }

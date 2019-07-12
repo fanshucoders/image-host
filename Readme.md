@@ -2,9 +2,9 @@
 这篇文档还有[中文版本](Readme_zh.md)
 ## What is Fanshu Image Host
 Fanshu Image Host is a open source image hosting programme for websites and/or apps.
-##  Guide
+##  Deploy
 Simply upload everything to your website and everything is done.
-## Generate Links
+## Usage
 ![](imgs/main.png)
 <br>This is a preview of the website. Click the upload button to upload pictures.
 
@@ -19,12 +19,15 @@ Simply upload everything to your website and everything is done.
 
 ![](imgs/delete.png)
 <br>Click on the <b style="background-color:red">&nbsp;X&nbsp;</b> button to remove the file from your browser(but not from the server).
+
 ## Todo List
 - [ ] Organise files according to date
-- [ ] <abbr id="display_progress_bar">Display progress bar with image while uploading</abbr>
-- [ ] <abbr id="delete_from_server">Delete from server, not only from browser</abbr>
+- [ ] Delete from server, not only from browser
 - [ ] Improve on compressing for png and gif
-- [x] ~~Right Click Menu~~
+- [ ] Improve on UI
+  - [x] ~~Right Click Menu~~
+  - [x] ~~Display progress bar with image while uploading~~
+  - [x] ~~Animations~~
 
 ## Download
 Download from the [releases](https://github.com/fanshucoders/image-host/releases) page.

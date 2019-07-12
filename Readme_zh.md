@@ -3,7 +3,7 @@
 [English version](Readme.md) of this document is also available.
 ## 什么是番薯图床
 番薯图床是一款开源的图床应用，为网站和应用提供图片外链。
-##  使用
+##  部署
 把所有文件上传到服务器即可。
 ## 制作链接
 ![](imgs/main.png)
@@ -21,10 +21,12 @@
 <br>点击 <b style="background-color:red">&nbsp;X&nbsp;</b> 从浏览器中删除图片(不会从服务器删除)
 ## Todo List
 - [ ] 按日期对文件分类
-- [ ] 上传时在图片上展示进度条
 - [ ] 不仅从浏览器删除，也可以从服务器删除
 - [ ] 改善对png和gif图片的压缩
-- [x] 右键菜单
+- [x] 改善用户界面
+  - [x] ~~右键菜单~~
+  - [x] ~~上传时在图片上展示进度条~~
+  - [x] ~~动画效果~~
 
 ## 下载
 从 [releases](https://github.com/fanshucoders/image-host/releases) 下载

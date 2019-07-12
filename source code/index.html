@@ -13,7 +13,7 @@
 		<title>番薯图床</title>
 		<link rel="icon" type="image/png" href="favicon.png" />
 		<style>
-			.imgcards{position:relative;width:auto;float:left;height:auto}
+			.imgcards{position:relative;width:auto;float:left;height:auto;}
 			image.resimg{
 				height:auto;
 				float:left;
@@ -28,6 +28,29 @@
 			.progressBar{
 				height:100%;
 				background-color:CadetBlue;
+			}
+			button.action:active{
+				opacity:0.4;
+			}
+			button.action{
+				border-radius:50%;
+				border:2px Crimson solid;
+				background:transparent;
+				height:40px;
+				width:40px;
+				-webkit-transition-duration: 0.4s;
+				transition-duration: 0.4s;
+			}
+			button.action:hover{
+				background:initial;
+				background-color:Crimson;
+			}
+			button.action i{
+				-webkit-transition-duration: 0.4s;
+				transition-duration: 0.4s;
+			}
+			button.action:hover i{
+				color:white;
 			}
 			.progressBarContainer{
 				top:0;
@@ -67,9 +90,9 @@
 			</nav>
 		  </div>
 		  <main class="mdl-layout__content">
-			<div class="page-content" style="margin:16px;pointer-events: auto;" id="main">
+			<div class="page-content" style="margin:16px;pointer-events: auto;z-index:1" id="main">
 				<!-- Colored FAB button with ripple -->
-				<button style="position:fixed;z-index:10;bottom:16px; right:16px;" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"  onclick="document.getElementById('upload').click()">
+				<button id="upload-display" style="position:fixed;z-index:10;bottom:16px; right:16px;" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"  onclick="document.getElementById('upload').click()">
 				  <i class="material-icons">cloud_upload</i>
 				</button>
 				<input id="upload" multiple onchange="back.up(this.files)" type="file" style="display:none">
@@ -82,6 +105,8 @@
 		  </main>
 		</div>
 		<div id="dropFile1" style="position:fixed;z-index:11;left:0;top:0;right:0;bottom:0;background-color:white;opacity:0.4;filter:alpha(opacity=40);text-align:center;display:none"><i style="font-size:200px;color:#333333;position:fixed;margin-left:auto;margin-right:autoposition: absolute;top: 50%;transform: translate(-50%, -50%);" class="material-icons">cloud_upload</i></div>
-		<div id="dropFile" style="position:fixed;z-index:12;left:0;top:0;right:0;bottom:0;display:none"></div>
+		<div id="dropFile" style="position:fixed;z-index:12;left:0;top:0;right:0;bottom:0;display:none">
+			<div id="menu" style="padding:5px;border-radius:4px;box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);opacity:80;overflow:hidden;position:fixed;height:auto;display:none;z-index:13;background-color:white"></div>
+		</div>
 	</body>
 </html>
