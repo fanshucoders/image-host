@@ -1,4 +1,4 @@
-function upload(data=!1){
+﻿function upload(data=!1){
 	//设置
 	var config =
 		{ 	file_max_size : data.file_max_size || 1024 * 1024 * 1024,//单文件大小限制false\0不限制
@@ -31,8 +31,6 @@ function upload(data=!1){
 	}
 	//添加文件
 	this.additem=(file,functions)=>{
-		functions.completeDo("https://tpc.googlesyndication.com/simgad/6225674944396520409?sqp=4sqPyQQ7QjkqNxABHQAAtEIgASgBMAk4A0DwkwlYAWBfcAKAAQGIAQGdAQAAgD-oAQGwAYCt4gS4AV_FAS2ynT4&rs=AOga4qkO4QlM85m1W6otfRAytWlWBQVPfA");
-		return;
 		//判断是否允许重复
 		if(!config.accept_re){
 			//不允许
