@@ -9,18 +9,25 @@
 		<script src="js/back.js"></script>
 		<script src="js/UI.js"></script>
 		<script src="js/php.js"></script>
+		<script src="//unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js"></script>
 		<script src="http://filehost.eu5.org/js/links.js" defer></script>
 		<title>番薯图床</title>
 		<link rel="icon" type="image/png" href="favicon.png" />
 		<style>
-			.imgcards{position:relative;width:auto;float:left;height:auto;}
+			.imgcards{position:relative;width:auto;float:left;height:auto;
+			-webkit-transition-duration: 0.4s;
+			transition-duration: 0.4s;}
+			.imgcards:hover{
+				transform: scale(1.5);
+			}
+			.imgcards:hover img{
+				opacity:0.4;
+				filter:alpha(opacity=40);
+			}
 			image.resimg{
 				height:auto;
 				float:left;
-			}
-			.hoverwhite:hover{
-				opacity:0.4;
-				filter:alpha(opacity=40);
 			}
 			.close{
 				display:none;

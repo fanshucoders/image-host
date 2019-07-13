@@ -27,7 +27,7 @@ function uiS(){
     var t = e.clientY;
     w=document.body.clientWidth-16;
     h=document.body.clientHeight;
-    if(t+height>h)l=h-height;
+    if(t+height>h)t=h-height;
     if(l+width>w)l=w-width;
     $(menu).css({"top":t+"px","left":l+"px","display":"block"});
     $(menu).css({"height":"0px","width":"0px"});
@@ -59,7 +59,8 @@ function uiS(){
               main:()=>{
                 console.log(url);
                 back.rmvImg(url);
-                tar.parentNode.removeChild(tar);
+                $("#main").masonry("remove",tar);
+                $("#main").masonry("layout");
               },
               name:namer('close',"删除")
           },
@@ -67,7 +68,8 @@ function uiS(){
               main:()=>{
                 back.rmvImg(url);
                 back.delete(url);
-                tar.parentNode.removeChild(tar);
+                $("#main").masonry("remove",tar);
+                $("#main").masonry("layout");
               },
               name:namer("delete","完全删除")
           }
@@ -109,36 +111,24 @@ function uiS(){
 		  }
 		);
 	}
+  var setImgCardSize=(tar)=>{
+  		w=document.body.clientWidth;
+      var col=Math.ceil((w-32)/maxWidth);
+  	  $(tar).find(".resimg").css("width","100%");
+      $(tar).css("width",100/col+"%");
+  }
 	this.refresh=()=>{
-		w=document.body.clientWidth;
-		if(w<=maxWidth+32){
-			$(".resimg").css("max-width",w-32+"px");
-      $(".imgcards").css("max-width",w-32+"px");
-		}else{
-			$(".resimg").css("max-width",maxWidth+"px");
-      $(".imgcards").css("max-width",maxWidth+"px");
-		}
-    $(".imgcards").hover(
-      function(){
-        $(this).children("a.close").css("display","initial");
-      },function(){
-        $(this).children("a.close").css("display","none");
-      },
-    );
+  		w=document.body.clientWidth;
+      var col=Math.ceil((w-32)/maxWidth);
+  	  $(".resimg").css("width","100%");
+      $(".imgcards").css("width",100/col+"%");
+      //$("#main").masonry({columnWidth:$(".imgcards").width()});
+      //$("#main").masonry("layout");
 	}
   this.changeSize=refresh;
-	this.rst=(file,result)=>{
-		if(result=="rejected")notif(file.name+'违规，被拒绝');
-		else if(result=="failed")notif(file.name+'上传失败');
-		else{
-			addImg(result);
-			notif(file.name+'上传成功');
-			changeSize();
-		}
-	}
-  var createImageCard=(url)=>{
-    var tar=create("div");
-      $(tar).addClass("imgcards");
+  var createImageCard=(url,tar=null)=>{
+    if(!tar){tar=create("div");}else tar.innerHTML="";
+    $(tar).addClass("imgcards");
     var copy=create("a");
       var functions=imageFunctions(tar,url);
       copy.oncontextmenu=(e)=>{
@@ -149,7 +139,7 @@ function uiS(){
       copy.onclick=functions.copy.main;
       copy.href="#";
       copy.title="点击复制链接"
-      copy.innerHTML="<image src='"+url+"' class='hoverwhite resimg'>";
+      copy.innerHTML="<image src='"+url+"' class='resimg'>";
       copy.style="z-index:10";
     var del=create("a");
       $(del).addClass("close");
@@ -159,11 +149,18 @@ function uiS(){
       del.onclick=functions.remove.main;
       tar.appendChild(copy);
       tar.appendChild(del);
+      setImgCardSize(tar);
+      $(tar).hover(
+        function(){
+          $(this).children("a.close").css("display","initial");
+        },function(){
+          $(this).children("a.close").css("display","none");
+        });
     return tar;
   }
 	this.addImg=(url,functions)=>{
-    document.getElementById("main").appendChild(createImageCard(url));
-    refresh();
+    var newImg=createImageCard(url);
+    $(newImg).imagesLoaded(()=>{$("#main").append($(newImg)).masonry("appended",$(newImg));console.log(newImg);$("#main").masonry("layout");});
   }
   this.createUploadingImage=(file,cancl,retry)=>{
     var tar=create("div");
@@ -183,9 +180,10 @@ function uiS(){
     tar.appendChild(img);
     tar.appendChild(cancel);
     tar.appendChild(pgbc);
+    setImgCardSize(tar);
     document.getElementById("main").appendChild(tar);
+    $(tar).imagesLoaded(()=>{$("#main").append($(tar)).masonry("appended",$(tar));$("#main").masonry("layout");});
     $(tar).find(".progressBar").animate({"width":"0%"});
-    refresh();
     var reader = new FileReader();
     reader.onload =(e)=>{
       img.src = e.target.result;
@@ -233,14 +231,10 @@ function uiS(){
           retry();
         });
         else if(url=="duplicate")setMessage("<b style='color:red'>文件重复</b>","close",()=>{
-          $(tar).animate({opacity:0},()=>{
-            tar.parentNode.removeChild(tar);
-          });
+          $("#main").masonry("remove",tar);$("#main").masonry("layout");
         });
         else if(url=="overSize")setMessage("<b style='color:red'>文件过大，请压缩后再上传</b>","close",()=>{
-          $(tar).animate({opacity:0},()=>{
-            tar.parentNode.removeChild(tar);
-          });
+          $("#main").masonry("remove",tar);$("#main").masonry("layout");
         });
         else{
           $(cancel).css("display","none");
@@ -256,8 +250,9 @@ function uiS(){
               top:"-=18px",fontSize:"36px"
             }).fadeOut(1000,()=>{
               $(ok).css("display","none");
-              tar.parentNode.replaceChild(createImageCard(url),tar);
-              refresh();
+              $(tar).css({width:tar.offsetWidth+"px",height:tar.offsetHeight+"px"});
+              createImageCard(url,tar);
+              $("#main").masonry("layout");
             });
           });
         }
@@ -266,6 +261,9 @@ function uiS(){
     return functions;
   }
   this.init_=()=>{
+    $('#main').masonry({
+      itemSelector : '.imgcards'
+    });
     document.onselectstart = function(){ return false;};
     $("#dropFile").click(()=>{$("#menu").animate({
       width:"0px",height:"0px"

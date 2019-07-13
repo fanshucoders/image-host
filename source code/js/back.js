@@ -4,6 +4,7 @@ function backS(){
     this.imgs=[];
 		this.delete=(url)=>{php.del_file(url);};
     $(document).ready(function(){
+				ui.init_();
         document.getElementById("dropFile").ondrop=(e)=>{
             up(e.target.files?e.target.files:e.dataTransfer.files);
         };
@@ -12,14 +13,12 @@ function backS(){
             ui.addImg(imgs[img]);
         }
         $(window).resize(ui.changeSize);
-				ui.init_();
     });
     var setImgs=(value) =>
     {
         localStorage.setItem("Imgs",JSON.stringify(value));
     }
 		this.rmvImg=(url)=>{
-				console.log(imgs);
 				imgs.splice(imgs.indexOf(url),1);
 				setImgs(imgs);
 				return imgs;
@@ -27,7 +26,6 @@ function backS(){
     var getImgs=()=>
     {
         value=localStorage.getItem("Imgs")
-        //console.log(value=localStorage.getItem("Imgs"));
         if(value!=null)
             return JSON.parse(value);
         else
@@ -36,7 +34,6 @@ function backS(){
     this.getFileExt=(ox)=>{
         o=ox.name;
         var pos=o.lastIndexOf(".");
-        //console.log(o.substring(pos+1))
         return o.substring(pos+1);
     }
     var qing=false;
@@ -64,7 +61,6 @@ function backS(){
         else upone();
     }
     var upone=()=>{
-				console.log(1);
         if(files.length>0){
             var pair=files.shift();
             var file=pair.file,functions=pair.functions;
