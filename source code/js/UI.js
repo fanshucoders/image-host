@@ -37,6 +37,12 @@ function uiS(){
   }
   var imageFunctions=(tar,url)=>{
       var functions={
+          open:{
+              main:()=>{
+                  window.open(url);
+              },
+              name:namer("launch","打开")
+          },
           copy:{
               main:()=>{
                       const input = document.createElement('input');
@@ -87,7 +93,7 @@ function uiS(){
       },
       mainPage:{
         main:()=>{
-          location.href="https://www.github.com/fanshucoders/image-host"
+          window.open("https://www.github.com/fanshucoders/image-host");
         },
         name:namer("home","项目主页")
       }
