@@ -183,11 +183,11 @@ function upload(data=!1){
 		let fd = new FormData();
 			console.log(url.replace(config.domain,""));
 			fd.append("path",url.replace(config.domain,""));
+			fd.append('act', 'del_file');
 		let xhr = new XMLHttpRequest();
 			xhr.open('post',config.uploadphp);
 		xhr.send(fd);
 	}
-
 	return this;
 }
 var php=upload({file_max_size:1024 * 1024 * 10,chunkSize : 1024 * 100});
