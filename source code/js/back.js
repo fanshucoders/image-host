@@ -2,15 +2,11 @@ function backS(){
 		var maxUp=4;
     var ext = new Set(["ICON","BMP","GIF","JPEG","PNG","ICO","JPG","DIB","JFIF","PJPEG","PJP"]);
     this.imgs=[];
+		this.delete=(url)=>{php.del_file(url);};
     $(document).ready(function(){
         document.getElementById("dropFile").ondrop=(e)=>{
             up(e.target.files?e.target.files:e.dataTransfer.files);
         };
-        var div = document.createElement('div');
-        div.innerHTML = '<a href="./"></a>';
-        domain=(div.firstChild.href);
-        domain=domain.substring(0,domain.length-1);
-        div = null;
         console.log(domain);
         imgs=getImgs();
         for(var img in imgs){

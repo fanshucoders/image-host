@@ -2,14 +2,14 @@
 	//设置
 	var config =
 		{ 	file_max_size : data.file_max_size || 1024 * 1024 * 1024,//单文件大小限制false\0不限制
-			chunkSize : data.chunkSize || 1024 * 1024 * 2 ,//单个切片大小
+			chunkSize : data.chunkSize || 1024 * 1024 * 1 ,//单个切片大小
 			//注意PHP默认上传文件默认最大2MB   若要更改请找到    upload_max_filesize = 2m ;   这行进行更改
 			uploadphp : data.uploadphp || "upload.php",//文件上传php
 			accept_type : data.accept_type || "",//空\false\0为不限制
 			Maximum : data.Maximum  || 0,//一次最多可上传数目false\0不限制
 			accept_re : data.accept_re || false ,//false\0为不允许 true\1 允许
 			nameLength: Math.floor(data.nameLength) || 32,
-			savedir : data.savedir || "savedir"
+			savedir : data.savedir || "uploads"
 		},
 	g = 0,
 	FUploaders = Object.create(null,{}),
@@ -65,14 +65,14 @@
 		FUploaders[id]={};
 		FUploaders[id].file = file;
 		FUploaders[id].chunks = Math.ceil(file.size / config.chunkSize);
+		console.log(FUploaders[id].chunks)
 		FUploaders[id].uploading = 1; //1进行 0暂停
-		FUploaders[id].currentChunk = -1 ;
+		FUploaders[id].currentChunk = 0 ;
 		FUploaders[id].load = 0;
 		FUploaders[id].functions = functions;
 		upload(id);
 
 		//删除
-		console.log(2);
 		return ()=>{
 			FUploaders[id].uploading = 0;
 			let fd = new FormData();
@@ -95,7 +95,7 @@
 	}
 	//上传
 	var upload=(id)=>{
-		FUploaders[id].currentChunk++;
+		console.log(FUploaders[id])
 		let file = FUploaders[id].file,
 			start = FUploaders[id].currentChunk * config.chunkSize,
 			end = start + config.chunkSize >= file.size ? file.size : start + config.chunkSize,
@@ -126,6 +126,7 @@
 		//成功
 		xhr.onload = ()=> {
 			onprogress(FUploaders[id].currentChunk * config.chunkSize + blob.size,blob.size);
+			FUploaders[id].currentChunk++;
 			if(FUploaders[id].currentChunk < FUploaders[id].chunks) {
 				//下一片
 
@@ -139,6 +140,7 @@
 				fd2.append('fname', randomString()+"."+getFileExt(file));
 				fd2.append('act', 'combine');
 				fd2.append("chunks",  FUploaders[id].chunks);
+				fd2.append('savedir', config.savedir);
 				let xhr2 = new XMLHttpRequest();
 				xhr2.open('post',config.uploadphp);
 				xhr2.send(fd2);
@@ -147,9 +149,9 @@
 						//文件合并完成
 						FUploaders[id].load = 1;
 						FUploaders[id].fname = fd2.get("fname");
+						FUploaders[id].functions.completeDo(xhr2.responseText+fd2.get("fname"));
 						xhr2 = null;
 						fd2 = null;
-						FUploaders[id].functions.completeDo(domain+"/uploads/"+FUploaders[id].fname);
 					}
 				}
 			}
@@ -176,4 +178,4 @@
 
 	return this;
 }
-var php=upload();
+var php=upload({file_max_size:1024 * 1024 * 10,chunkSize : 1024 * 100});

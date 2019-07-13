@@ -60,6 +60,7 @@ function uiS(){
           delete:{
               main:()=>{
                 back.rmvImg(url);
+                back.delete(url);
                 tar.parentNode.removeChild(tar);
               },
               name:namer("delete","完全删除")

@@ -21,10 +21,10 @@ Simply upload everything to your website and everything is done.
 <br>Click on the <b style="background-color:red">&nbsp;X&nbsp;</b> button to remove the file from your browser(but not from the server).
 
 ## Todo List
-- [ ] Organise files according to date
-- [ ] Delete from server, not only from browser
-- [ ] Improve on compressing for png and gif
-- [ ] Improve on UI
+- [x] Organise files according to date
+- [x] Delete from server, not only from browser
+- [ ] ~~Improve on compressing for png and gif~~
+- [x] Improve on UI
   - [x] ~~Right Click Menu~~
   - [x] ~~Display progress bar with image while uploading~~
   - [x] ~~Animations~~
