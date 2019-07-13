@@ -49,9 +49,12 @@ function uiS(){
                       document.body.appendChild(input);
                       input.setAttribute('value', url);
                       input.select();
+                      input.style.display="none";
                       if (document.execCommand('copy')) {
-                          document.execCommand('copy');ui.notif("复制成功");
+                          document.execCommand('copy');notif("复制成功");
                       }
+                      if(input.parentNode)input.parentNode.removeChild(input);
+                      //input=null;
               },
               name:namer("flip_to_front","复制")
           },
