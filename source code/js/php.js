@@ -1,15 +1,21 @@
-﻿function upload(data=!1){
+function upload(data=!1){
 	//设置
 	var config =
-		{ 	file_max_size : data.file_max_size || 1024 * 1024 * 1024,//单文件大小限制false\0不限制
+		{
+			file_max_size : data.file_max_size || 1024 * 1024 * 1024,//单文件大小限制false\0不限制
 			chunkSize : data.chunkSize || 1024 * 1024 * 1 ,//单个切片大小
 			//注意PHP默认上传文件默认最大2MB   若要更改请找到    upload_max_filesize = 2m ;   这行进行更改
 			uploadphp : data.uploadphp || "upload.php",//文件上传php
-			accept_type : data.accept_type || "",//空\false\0为不限制
-			Maximum : data.Maximum  || 0,//一次最多可上传数目false\0不限制
 			accept_re : data.accept_re || false ,//false\0为不允许 true\1 允许
 			nameLength: Math.floor(data.nameLength) || 32,
-			savedir : data.savedir || "uploads"
+			savedir : data.savedir || "uploads",
+			domain : data.domain|| (()=>{
+								var div = document.createElement('div');
+								div.innerHTML = '<a href="./"></a>';
+								var domain=(div.firstChild.href);
+								div = null;
+								return domain;
+							})()
 		},
 	g = 0,
 	FUploaders = Object.create(null,{}),
@@ -78,14 +84,11 @@
 			let fd = new FormData();
 			fd.append("id",id);
 			fd.append('act', 'del');
-			fd.append('load', FUploaders[id].load);
-			if(FUploaders[id].load)fd.append('fname', FUploaders[id].fname);
 			let xhr = new XMLHttpRequest();
 			xhr.open('post',config.uploadphp);
 			xhr.send(fd);
 			xhr.onreadystatechange = ()=> {
 				if (xhr.readyState == 4 && xhr.status == 200 ) {
-					console.log(id + " 已删除");
 					delete FUploaders[id]
 					//从文件列表移除
 				}
@@ -118,10 +121,10 @@
 		}
 		function onprogress(size,e){
 			var nowTime = (new Date()).getTime();
-				progress = parseInt( size / FUploaders[id].file.size * 100),
+				progress = size / FUploaders[id].file.size * 100,
 				speed = parseInt(e / [(nowTime - startT + 20) / 1000]),
 				preTime = Math.round((FUploaders[id].file.size - size) / speed);
-			FUploaders[id].functions.setProgress()
+			FUploaders[id].functions.setProgress(progress)
 		}
 		//成功
 		xhr.onload = ()=> {
@@ -149,7 +152,7 @@
 						//文件合并完成
 						FUploaders[id].load = 1;
 						FUploaders[id].fname = fd2.get("fname");
-						FUploaders[id].functions.completeDo(xhr2.responseText+fd2.get("fname"));
+						FUploaders[id].functions.completeDo(config.domain+xhr2.responseText+"/"+fd2.get("fname"));
 						xhr2 = null;
 						fd2 = null;
 					}
@@ -174,6 +177,15 @@
 		}
 		fd = null;
 
+	}
+
+	this.del_file = (url)=>{
+		let fd = new FormData();
+			console.log(url.replace(config.domain,""));
+			fd.append("path",url.replace(config.domain,""));
+		let xhr = new XMLHttpRequest();
+			xhr.open('post',config.uploadphp);
+		xhr.send(fd);
 	}
 
 	return this;

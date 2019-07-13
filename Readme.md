@@ -24,10 +24,11 @@ Simply upload everything to your website and everything is done.
 - [x] Organise files according to date
 - [x] Delete from server, not only from browser
 - [ ] ~~Improve on compressing for png and gif~~
-- [x] Improve on UI
+- [ ] Improve on UI
   - [x] ~~Right Click Menu~~
   - [x] ~~Display progress bar with image while uploading~~
   - [x] ~~Animations~~
+  - [x] Select images
 
 ## Download
 Download from the [releases](https://github.com/fanshucoders/image-host/releases) page.

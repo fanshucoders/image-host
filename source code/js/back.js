@@ -7,7 +7,6 @@ function backS(){
         document.getElementById("dropFile").ondrop=(e)=>{
             up(e.target.files?e.target.files:e.dataTransfer.files);
         };
-        console.log(domain);
         imgs=getImgs();
         for(var img in imgs){
             ui.addImg(imgs[img]);
