@@ -49,10 +49,10 @@ function uiS(){
                       document.body.appendChild(input);
                       input.setAttribute('value', url);
                       input.select();
-                      input.style.display="none";
                       if (document.execCommand('copy')) {
                           document.execCommand('copy');notif("复制成功");
                       }
+                      input.style.display="none";
                       if(input.parentNode)input.parentNode.removeChild(input);
                       //input=null;
               },
