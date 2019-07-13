@@ -19,11 +19,14 @@
 			-webkit-transition-duration: 0.4s;
 			transition-duration: 0.4s;}
 			.imgcards:hover{
-				transform: scale(1.5);
+				transform: scale(1.25);
+				z-index:5;
 			}
-			.imgcards:hover img{
-				opacity:0.4;
-				filter:alpha(opacity=40);
+			.imgcards:active{
+				transform: scale(1.35);
+				z-index:5;
+				-webkit-transition-duration: 0.15s;
+				transition-duration: 0.15s;
 			}
 			image.resimg{
 				height:auto;

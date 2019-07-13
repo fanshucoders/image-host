@@ -1,5 +1,5 @@
 function uiS(){
-  var maxWidth=144;
+  var maxWidth=180;
   var create=(type)=>{
     return document.createElement(type);
   }
@@ -123,7 +123,7 @@ function uiS(){
   	  $(".resimg").css("width","100%");
       $(".imgcards").css("width",100/col+"%");
       //$("#main").masonry({columnWidth:$(".imgcards").width()});
-      //$("#main").masonry("layout");
+      setTimeout(()=>{$("#main").masonry("layout");},700)
 	}
   this.changeSize=refresh;
   var createImageCard=(url,tar=null)=>{
